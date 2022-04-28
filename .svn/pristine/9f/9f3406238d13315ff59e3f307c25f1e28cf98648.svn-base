@@ -1,0 +1,104 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using System.Reflection;
+using CommonObjects;
+using FrameworkBaseService;
+using Utilities;
+using System.Security.Cryptography;
+using System.IO;
+using FPayPropertyLib;
+
+namespace ServiceTest
+{
+    public partial class frm_Test : Form
+    {
+
+        ServiceOperation serviceOperation = null;
+
+        public frm_Test()
+        {
+            InitializeComponent();
+            btn_Initialize_Click(this, null);
+        }
+
+        private void btn_Initialize_Click(object sender, EventArgs e)
+        {
+            serviceOperation = new ServiceOperation();
+            for (int i = 0; i < 10; i++)
+            {
+                int nextId = serviceOperation.GetNextId();
+                List<string> parameters = new List<string>();
+                parameters.Add("Sample" + i.ToString());
+                FPayService service = new FPayService("FPayService" + nextId.ToString(), @"C:\Tests\FPAYBL\Config\FPayService", nextId, parameters);
+                serviceOperation.AddService(service);
+            }
+            FPayService FPayService = (FPayService)serviceOperation.GetBaseService();
+            FPayService.InitializeService();
+        }
+
+        private void btn_Test_Click(object sender, EventArgs e)
+        {
+            //-----------------------------------------
+            string refCode = Utility.GetUniqueId();
+            UserCredential uCredential = new UserCredential();
+            uCredential.UserName = Utility.GetParameter("UserName");
+            uCredential.Password = Utility.GetParameter("Password1");
+            uCredential.ExtendedPassword = Utility.GetParameter("Password2");
+            Information.SecureCredential(uCredential, refCode);
+            Request request = new Request();
+            request.BinaryData = null;
+            request.Command = "FPayServiceTest";
+            request.CommandType = "Normal";
+            request.Credential = uCredential;
+            request.Parameters = "";
+            request.RefrenceNo = refCode;
+            //-----------------------------------------
+            FPayService service = (FPayService)serviceOperation.GetBaseService();
+            Response response = service.DoJob(request);
+            new frm_ShowResult(response.Command + "\r\n" +
+                response.MessageCode + "\r\n" +
+                response.Message).ShowDialog();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            List<string> paramList = new List<string>();
+            paramList.Add("SEQUENCE=" + "SEQUENCE");
+
+            string encriptedAC = "";
+            paramList.Add("SIGN=" + encriptedAC); //-- it will be used on web api leave it with empty value on web site
+            //-----------------------------------------
+            string refCode = Utility.GetUniqueId();
+            UserCredential uCredential = new UserCredential();
+            uCredential.UserName = "";
+            uCredential.Password = "";
+            uCredential.ExtendedPassword = "";
+            Request request = new Request();
+            request.BinaryData = null;
+            request.Command = "FPayServiceGetDataList";
+            request.CommandType = "Normal";
+            request.Credential = uCredential;
+            request.Parameters = Encoding.Default.GetString(Utility.SerializeXML_Memory(typeof(List<string>), paramList));
+            request.RefrenceNo = refCode;
+            //-----------------------------------------
+            FPayService service = (FPayService)serviceOperation.GetBaseService();
+            Response response = service.DoJob(request);
+            if (response.MessageCode == "000000")
+            {
+                List<string> respList = (List<string>)Utility.DeserializeXML_Memory(typeof(List<string>),
+                    Encoding.Default.GetBytes(response.Result));
+                DataTable table = Information.CreateTable(respList[0], "KEY|VALUE|"); 
+            }
+            new frm_ShowResult(response.Command + "\r\n" +
+                response.MessageCode + "\r\n" +
+                response.Message).ShowDialog();
+        }
+
+    }
+}

@@ -1,0 +1,75 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ServiceTest
+{
+    public class MenuItem
+    {
+        private string _Key;
+
+        public string Key
+        {
+            get { return _Key; }
+            set { _Key = value; }
+        }
+        private string _Title;
+
+        public string Title
+        {
+            get { return _Title; }
+            set { _Title = value; }
+        }
+        private string _Link;
+
+        public string Link
+        {
+            get { return _Link; }
+            set { _Link = value; }
+        }
+        private string _Icon;
+
+        public string Icon
+        {
+            get { return _Icon; }
+            set { _Icon = value; }
+        }
+        private string _Thumbnail;
+
+        public string Thumbnail
+        {
+            get { return _Thumbnail; }
+            set { _Thumbnail = value; }
+        }
+        private string _Image;
+
+        public string Image
+        {
+            get { return _Image; }
+            set { _Image = value; }
+        }
+        private string _Desc;
+
+        public string Desc
+        {
+            get { return _Desc; }
+            set { _Desc = value; }
+        }
+        private string _Txt;
+
+        public string Txt
+        {
+            get { return _Txt; }
+            set { _Txt = value; }
+        }
+        private List<MenuItem> _SubMenu;
+
+        public List<MenuItem> SubMenu
+        {
+            get { return _SubMenu; }
+            set { _SubMenu = value; }
+        }
+    }
+}

@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+    <configSections>
+    </configSections>
+  <connectionStrings>
+    <add name="FPayDataAccess.Properties.Settings.FPayDBConnectionString"
+      connectionString="Data Source=79.175.176.26;Initial Catalog=FPayDB;Persist Security Info=True;User ID=sa;Password=p@ssw0rd1360"
+      providerName="System.Data.SqlClient" />
+  </connectionStrings>
+</configuration>
